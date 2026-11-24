@@ -2,152 +2,101 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(const CoinovaaApp());
 
-const gold = Color(0xFFE8B944);
-const ink = Color(0xFF101010);
-
 class CoinovaaApp extends StatelessWidget {
   const CoinovaaApp({super.key});
   @override
-  Widget build(BuildContext context) => MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: 'Coinovaa BD',
-    theme: ThemeData(
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: ink,
-      colorScheme: ColorScheme.fromSeed(seedColor: gold, brightness: Brightness.dark),
-      useMaterial3: true,
-    ),
-    home: const StartPage(),
-  );
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Colors.black),
+      home: const LoginPage(),
+    );
+  }
 }
 
-class StartPage extends StatelessWidget {
-  const StartPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
   @override
-  Widget build(BuildContext context) => Scaffold(
-    body: Center(child: Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Text('COINOVAA BD', style: TextStyle(color: gold, fontSize: 30, fontWeight: FontWeight.w900, letterSpacing: 2)),
-        const SizedBox(height: 8),
-        const Text('WATCH • PLAY • EARN', style: TextStyle(color: Colors.white70)),
-        const SizedBox(height: 32),
-        SizedBox(width: double.infinity, child: FilledButton(
-          style: FilledButton.styleFrom(backgroundColor: gold, foregroundColor: ink),
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const UserHome())),
-          child: const Text('Open User App'),
-        )),
-        const SizedBox(height: 12),
-        SizedBox(width: double.infinity, child: OutlinedButton(
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminLoginPage())),
-          child: const Text('Admin Login'),
-        )),
-        const SizedBox(height: 18),
-        const Text('Prototype build — real accounts and payments are not connected.', textAlign: TextAlign.center, style: TextStyle(color: Colors.white54, fontSize: 12)),
-      ]),
-    )),
-  );
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class AdminLoginPage extends StatefulWidget {
-  const AdminLoginPage({super.key});
-  @override
-  State<AdminLoginPage> createState() => _AdminLoginPageState();
-}
-
-class _AdminLoginPageState extends State<AdminLoginPage> {
+class _LoginPageState extends State<LoginPage> {
   final id = TextEditingController();
   final password = TextEditingController();
-  String error = '';
-  bool obscure = true;
-
-  void login() {
-    // Demo-only gate. Replace with server-side authentication before deployment.
-    final validId = id.text.trim() == 'riyad5052';
-final validpass = password.text.trim() == 'riyad505252';
-    if (validId && validpass) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => AdminDashboard(adminId: id.text.trim())));
-    } else {
-      setState(() => error = 'সঠিক Admin ID এবং Password দিন।');
-    }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Text("Coinovaa", style: TextStyle(fontSize: 32, color: Colors.amber, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 20),
+          TextField(controller: id, decoration: const InputDecoration(labelText: "ID", border: OutlineInputBorder())),
+          const SizedBox(height: 12),
+          TextField(controller: password, obscureText: true, decoration: const InputDecoration(labelText: "Password", border: OutlineInputBorder())),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, minimumSize: const Size(double.infinity, 50)),
+            onPressed: () {
+              if (id.text.trim() == 'riyad5052' && password.text.trim() == 'riyad505252') {
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const AdminDashboard()));
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Wrong ID or Password")));
+              }
+            },
+            child: const Text("Login", style: TextStyle(color: Colors.black)),
+          ),
+        ]),
+      ),
+    );
   }
-
-  @override
-  void dispose() { id.dispose(); password.dispose(); super.dispose(); }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Admin Login')),
-    body: ListView(padding: const EdgeInsets.all(22), children: [
-      const SizedBox(height: 28),
-      const Icon(Icons.admin_panel_settings, color: gold, size: 64),
-      const SizedBox(height: 18),
-      const Text('COINOVAA BD ADMIN', textAlign: TextAlign.center, style: TextStyle(color: gold, fontSize: 22, fontWeight: FontWeight.bold)),
-      const SizedBox(height: 28),
-      TextField(controller: id, decoration: const InputDecoration(labelText: 'Admin Login ID', border: OutlineInputBorder(), hintText: 'OwnerAdmin / Admin2')),
-      const SizedBox(height: 14),
-      TextField(controller: password, obscureText: obscure, decoration: InputDecoration(labelText: 'Password', border: const OutlineInputBorder(), suffixIcon: IconButton(icon: Icon(obscure ? Icons.visibility : Icons.visibility_off), onPressed: () => setState(() => obscure = !obscure)))),
-      const SizedBox(height: 16),
-      FilledButton(onPressed: login, style: FilledButton.styleFrom(backgroundColor: gold, foregroundColor: ink), child: const Text('Login')),
-      if (error.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 12), child: Text(error, style: const TextStyle(color: Colors.redAccent))),
-      const SizedBox(height: 16),
-      const Text('Demo only: এই স্ক্রিনে ID যাচাই হয়, কিন্তু প্রকৃত password/server authentication এখনো যুক্ত নয়।', style: TextStyle(color: Colors.white60, fontSize: 12)),
-    ]),
-  );
 }
 
 class AdminDashboard extends StatelessWidget {
-  final String adminId;
-  const AdminDashboard({super.key, required this.adminId});
+  const AdminDashboard({super.key});
+  Widget card(BuildContext context, String title, String sub, IconData icon, Widget page) {
+    return Card(color: const Color(0xFF1E1E1E), child: ListTile(
+      leading: Icon(icon, color: Colors.amber, size: 32),
+      title: Text(title, style: const TextStyle(fontSize: 18)),
+      subtitle: Text(sub),
+      trailing: const Icon(Icons.arrow_forward_ios),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => page)),
+    ));
+  }
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Admin Dashboard'), actions: [IconButton(onPressed: () => Navigator.popUntil(context, (r) => r.isFirst), icon: const Icon(Icons.logout))]),
-    body: ListView(padding: const EdgeInsets.all(18), children: [
-      Text('Welcome, $adminId', style: const TextStyle(color: gold, fontSize: 22, fontWeight: FontWeight.bold)),
-      const SizedBox(height: 8),
-      const Text('Full Admin Access — prototype dashboard'),
-      const SizedBox(height: 18),
-      const _AdminTile(Icons.people, 'Manage Users', 'View, block and review user accounts'),
-      const _AdminTile(Icons.toll, 'Coin Management', 'Review coin adjustments'),
-      const _AdminTile(Icons.video_library, 'Video & Tasks', 'Manage earning content'),
-      const _AdminTile(Icons.group_add, 'Referral Settings', 'Configure referral rules'),
-      const _AdminTile(Icons.payments, 'Withdraw Requests', 'Review bKash, Nagad and Rocket requests'),
-      const _AdminTile(Icons.receipt_long, 'Transactions', 'Review transaction records'),
-      const _AdminTile(Icons.settings, 'App Settings', 'Manage minimum withdrawal: ৳200'),
-      const SizedBox(height: 14),
-      const Text('These controls are visual placeholders. No user data, coins, withdrawals or payments are changed until a secure backend is connected.', style: TextStyle(color: Colors.white60)),
-    ]),
-  );
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Admin Dashboard"), backgroundColor: Colors.black, actions: [IconButton(icon: const Icon(Icons.logout), onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginPage())))]),
+      body: ListView(padding: const EdgeInsets.all(12), children: [
+        const Text("Welcome, riyad5052", style: TextStyle(fontSize: 24, color: Colors.amber, fontWeight: FontWeight.bold)),
+        const Text("Full Admin Access"),
+        const SizedBox(height: 12),
+        card(context, "Manage Users", "View, block and review user accounts", Icons.people, const UsersPage()),
+        card(context, "Coin Management", "Review coin adjustments", Icons.monetization_on, const CoinPage()),
+        card(context, "Video & Tasks", "Manage earning content", Icons.video_library, const VideoPage()),
+        card(context, "Referral Settings", "Configure referral rules", Icons.group_add, const ReferralPage()),
+        card(context, "Withdraw Requests", "Review bKash, Nagad and Rocket requests", Icons.account_balance_wallet, const WithdrawPage()),
+        card(context, "Transactions", "Review transaction records", Icons.receipt, const TransactionsPage()),
+        card(context, "App Settings", "Manage minimum withdrawal: 200 TK", Icons.settings, const SettingsPage()),
+      ]),
+    );
+  }
 }
 
-class _AdminTile extends StatelessWidget {
-  final IconData icon; final String title; final String subtitle;
-  const _AdminTile(this.icon, this.title, this.subtitle);
+class SimplePage extends StatelessWidget {
+  final String title; final List<String> items;
+  const SimplePage({super.key, required this.title, required this.items});
   @override
-  Widget build(BuildContext context) => Card(
-    color: const Color(0xFF202020),
-    child: ListTile(leading: Icon(icon, color: gold), title: Text(title), subtitle: Text(subtitle), trailing: const Icon(Icons.chevron_right)),
-  );
+  Widget build(BuildContext context) {
+    return Scaffold(appBar: AppBar(title: Text(title), backgroundColor: Colors.black),
+      body: ListView(children: items.map((e) => Card(child: ListTile(title: Text(e), trailing: Row(mainAxisSize: MainAxisSize.min, children: [TextButton(onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Approved"))), child: const Text("Approve")), TextButton(onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Rejected / Blocked"))), child: const Text("Reject", style: TextStyle(color: Colors.red)))]))).toList()));
+  }
 }
 
-class UserHome extends StatelessWidget {
-  const UserHome({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('COINOVAA BD')),
-    body: ListView(padding: const EdgeInsets.all(18), children: [
-      Container(padding: const EdgeInsets.all(24), decoration: BoxDecoration(color: const Color(0xFF29210E), borderRadius: BorderRadius.circular(18), border: Border.all(color: gold)), child: const Column(children: [
-        Text('YOUR BALANCE', style: TextStyle(color: gold)),
-        SizedBox(height: 8),
-        Text('0 Coins', style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold)),
-        Text('Demo balance only', style: TextStyle(color: Colors.white60)),
-      ])),
-      const SizedBox(height: 18),
-      const _AdminTile(Icons.play_circle, 'Watch & Earn', 'Video rewards setup pending'),
-      const _AdminTile(Icons.people, 'Refer & Earn', 'Referral setup pending'),
-      const _AdminTile(Icons.task, 'Daily Tasks', 'Sponsor tasks setup pending'),
-      const _AdminTile(Icons.sports_esports, 'Play Games', 'Game rewards setup pending'),
-      const _AdminTile(Icons.account_balance_wallet, 'Withdraw', 'bKash • Nagad • Rocket | Minimum ৳200'),
-    ]),
-  );
-}
+class UsersPage extends StatelessWidget { const UsersPage({super.key}); @override Widget build(BuildContext context) => const SimplePage(title: "Manage Users", items: ["User: rakib123 - 500 Coin - Active", "User: sakib99 - 1200 Coin - Active", "User: mim_01 - 0 Coin - New"]); }
+class CoinPage extends StatelessWidget { const CoinPage({super.key}); @override Widget build(BuildContext context) => const SimplePage(title: "Coin Management", items: ["rakib123 requested +100 Coin", "sakib99 requested +500 Coin"]); }
+class VideoPage extends StatelessWidget { const VideoPage({super.key}); @override Widget build(BuildContext context) => const SimplePage(title: "Video & Tasks", items: ["Video 1: https://youtube.com/... - 10 Coin", "Task: Follow Page - 20 Coin", "Video 2: Watch 1 min - 15 Coin"]); }
+class ReferralPage extends StatelessWidget { const ReferralPage({super.key}); @override Widget build(BuildContext context) => const SimplePage(title: "Referral Settings", items: ["Refer Bonus: 50 Coin", "Refer Commission: 10%", "Min Refer: 5 Friends"]); }
+class WithdrawPage extends StatelessWidget { const WithdrawPage({super.key}); @override Widget build(BuildContext context) => const SimplePage(title: "Withdraw Requests", items: ["rakib123 - bKash 017XX - 500 TK", "sakib99 - Nagad 018XX - 1000 TK", "mim_01 - Rocket 019XX - 300 TK"]); }
+class TransactionsPage extends StatelessWidget { const TransactionsPage({super.key}); @override Widget build(BuildContext context) => const SimplePage(title: "Transactions", items: ["rakib123 - Earn Video - +10 Coin", "sakib99 - Withdraw - 1000 TK", "mim_01 - Refer Bonus - +50 Coin"]); }
+class SettingsPage extends StatelessWidget { const SettingsPage({super.key}); @override Widget build(BuildContext context) => const SimplePage(title: "App Settings", items: ["Minimum Withdraw: 200 TK", "App Version: 1.1.0", "Maintenance: OFF"]); }
