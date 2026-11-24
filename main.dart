@@ -55,18 +55,30 @@ class _LoginPageState extends State<LoginPage> {
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
   Widget card(BuildContext context, String title, String sub, IconData icon, Widget page) {
-    return Card(color: const Color(0xFF1E1E1E), child: ListTile(
-      leading: Icon(icon, color: Colors.amber, size: 32),
-      title: Text(title, style: const TextStyle(fontSize: 18)),
-      subtitle: Text(sub),
-      trailing: const Icon(Icons.arrow_forward_ios),
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => page)),
-    ));
+    return Card(
+      color: const Color(0xFF1E1E1E),
+      child: ListTile(
+        leading: Icon(icon, color: Colors.amber, size: 32),
+        title: Text(title, style: const TextStyle(fontSize: 18)),
+        subtitle: Text(sub),
+        trailing: const Icon(Icons.arrow_forward_ios),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => page)),
+      ),
+    );
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Admin Dashboard"), backgroundColor: Colors.black, actions: [IconButton(icon: const Icon(Icons.logout), onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginPage())))]),
+      appBar: AppBar(
+        title: const Text("Admin Dashboard"),
+        backgroundColor: Colors.black,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginPage())),
+          )
+        ],
+      ),
       body: ListView(padding: const EdgeInsets.all(12), children: [
         const Text("Welcome, riyad5052", style: TextStyle(fontSize: 24, color: Colors.amber, fontWeight: FontWeight.bold)),
         const Text("Full Admin Access"),
@@ -84,12 +96,41 @@ class AdminDashboard extends StatelessWidget {
 }
 
 class SimplePage extends StatelessWidget {
-  final String title; final List<String> items;
+  final String title;
+  final List<String> items;
   const SimplePage({super.key, required this.title, required this.items});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text(title), backgroundColor: Colors.black),
-      body: ListView(children: items.map((e) => Card(child: ListTile(title: Text(e), trailing: Row(mainAxisSize: MainAxisSize.min, children: [TextButton(onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Approved"))), child: const Text("Approve")), TextButton(onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Rejected / Blocked"))), child: const Text("Reject", style: TextStyle(color: Colors.red)))]))).toList()));
+    return Scaffold(
+      appBar: AppBar(title: Text(title), backgroundColor: Colors.black),
+      body: ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return Card(
+            child: ListTile(
+              title: Text(items[index]),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Approved")));
+                    },
+                    child: const Text("Approve"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Rejected / Blocked")));
+                    },
+                    child: const Text("Reject", style: TextStyle(color: Colors.red)),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 
