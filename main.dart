@@ -64,7 +64,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   void login() {
     // Demo-only gate. Replace with server-side authentication before deployment.
     final validId = id.text.trim() == 'riyad5052';
-final validpass = password.text == 'riyad505252';
+final validpass = password.text.trim() == 'riyad505252';
     if (validId && validpass) {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => AdminDashboard(adminId: id.text.trim())));
     } else {
