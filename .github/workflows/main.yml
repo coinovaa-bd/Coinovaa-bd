@@ -20,7 +20,12 @@ jobs:
       - name: Fix project structure
         run: |
           if [ -f main.dart ]; then mkdir -p lib && mv main.dart lib/main.dart; fi
-          if [ ! -f pubspec.yaml ]; then flutter create --org com.coinovaa.app --project-name coinovaa_bd .; fi
+          cp lib/main.dart /tmp/main.dart.bak || echo "no main"
+          cp pubspec.yaml /tmp/pubspec.bak || echo "no pubspec"
+          rm -rf android
+          flutter create --org com.coinovaa.app --project-name coinovaa_bd . --overwrite
+          cp /tmp/main.dart.bak lib/main.dart || true
+          cp /tmp/pubspec.bak pubspec.yaml || true
           flutter pub get
       - name: Build APK
         run: flutter build apk --release
