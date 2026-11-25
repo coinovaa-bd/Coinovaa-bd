@@ -49,8 +49,14 @@ input{width:100%;padding:13px;border-radius:12px;border:1px solid #2A3566;backgr
 <div class="task"><div><b>👥 Friend Invite</b><div class="small">+200 Coins</div></div><button onclick="earn(200,this)">Claim</button></div>
 <div class="task"><div><b>✅ Daily Check-in</b><div class="small">+20 Coins</div></div><button onclick="earn(20,this)">Claim</button></div>
 </div><br><br><br>
+  
+<div class="nav">
+<div class="active" onclick="window.scrollTo(0,0)">🏠<br>Home</div>
+<div onclick="alert('Tasks উপরে আছে!')">🎯<br>Tasks</div>
+<div onclick="alert('Refer Code: COINOVAA - বন্ধুকে দিলে 200 Coins পাবা!')">👥<br>Refer</div>
+<div onclick="alert('Profile দেখতে Home এ যাও')">👤<br>Profile</div>
 </div>
-<div class="nav"><div class="active">🏠<br>Home</div><div>🎯<br>Tasks</div><div>👥<br>Refer</div><div>👤<br>Profile</div></div>
+  
 <script>
 let bal=Number(localStorage.getItem('c_bal')||0);
 let today=Number(localStorage.getItem('c_today')||0);
