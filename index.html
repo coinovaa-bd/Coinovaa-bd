@@ -6,11 +6,12 @@
 <title>COINOVAA</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:#070B1A;color:#fff;min-height:100vh;padding:16px}
+body{background:#070B1A;color:#fff;min-height:100vh;padding:16px;padding-bottom:90px}
 .top{display:flex;justify-content:space-between;align-items:center}
 .logo{font-size:26px;font-weight:900;letter-spacing:1px}
 .logo span{color:#FFD700}
-.btn{background:#FFD700;color:#000;border:0;padding:10px 18px;border-radius:20px;font-weight:800}
+.btn{background:#FFD700;color:#000;border:0;padding:10px 18px;border-radius:20px;font-weight:800;cursor:pointer}
+.btn-green{background:#00C853;color:#fff;border:0;padding:10px 18px;border-radius:20px;font-weight:800;cursor:pointer;width:100%;margin-top:10px}
 .card{background:#131A33;border:1px solid #2A3566;border-radius:18px;padding:18px;margin-top:16px}
 .small{color:#9AA3C7;font-size:13px}
 .big{font-size:38px;font-weight:900;margin:8px 0}
@@ -20,11 +21,19 @@ body{background:#070B1A;color:#fff;min-height:100vh;padding:16px}
 .box b{font-size:20px;display:block;margin-top:4px}
 .task{background:#1A2345;border-radius:14px;padding:14px;margin-top:12px;display:flex;justify-content:space-between;align-items:center}
 .task button{background:#00C853;color:#fff;border:0;padding:8px 14px;border-radius:20px;font-weight:700}
-.nav{position:fixed;left:0;right:0;bottom:0;background:#0D1330;display:flex;justify-content:space-around;padding:14px 0;border-top:1px solid #2A3566}
-.nav div{text-align:center;font-size:12px;color:#9AA3C7}
+.task button:disabled{background:#555}
+.nav{position:fixed;left:0;right:0;bottom:0;background:#0D1330;display:flex;justify-content:space-around;padding:14px 0;border-top:1px solid #2A3566;z-index:99}
+.nav div{text-align:center;font-size:12px;color:#9AA3C7;cursor:pointer;flex:1}
 .nav div.active{color:#FFD700}
 input{width:100%;padding:13px;border-radius:12px;border:1px solid #2A3566;background:#0D1330;color:#fff;margin-top:10px}
 #loginPage{text-align:center;padding-top:40px}
+.page{display:none}
+.page.active{display:block}
+.refer-code{background:#0D1330;border:1px dashed #FFD700;padding:16px;text-align:center;font-size:26px;font-weight:900;letter-spacing:2px;border-radius:12px;color:#FFD700;margin:12px 0}
+.profile-img{width:90px;height:90px;border-radius:50%;border:3px solid #FFD700;display:flex;align-items:center;justify-content:center;font-size:40px;background:#1A2345;margin:0 auto}
+.history-item{padding:10px 0;border-bottom:1px solid #2A3566;font-size:14px;display:flex;justify-content:space-between}
+.gold{color:#FFD700}
+.note{font-size:12px;color:#FFD700;text-align:center;margin-top:10px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -35,38 +44,90 @@ input{width:100%;padding:13px;border-radius:12px;border:1px solid #2A3566;backgr
 <h3>Login / Sign Up</h3>
 <input id="name" placeholder="তোমার নাম লিখো">
 <input id="phone" placeholder="মোবাইল নাম্বার">
+<input id="referInputLogin" placeholder="রেফার কোড থাকলে দাও (না থাকলে খালি রাখো)">
 <button class="btn" style="width:100%;margin-top:14px" onclick="login()">LOGIN KORO</button>
+<p class="small" style="margin-top:10px;text-align:center">রেফার কোড দিলে ID খুললেই বোনাস পাবা</p>
 </div>
 </div>
-
 <div id="app" style="display:none">
 <div class="top"><div class="logo">COIN<span>OVAA</span></div><button class="btn" onclick="logout()">Logout</button></div>
+<div id="page-home" class="page active">
 <div class="card"><div class="small">👋 Hello, <b id="uname" style="color:#fff"></b></div><div class="small" style="margin-top:10px">Total Balance</div><div class="big"><span id="bal">0</span> <span>Coins</span></div><div class="small">= ৳ <span id="taka">0</span> Taka • 1000 Coins = 100 Tk</div><button class="btn" style="width:100%;margin-top:14px" onclick="withdraw()">WITHDRAW KORO</button></div>
-<div class="row"><div class="box"><div class="small">Today Earn</div><b id="today">0</b></div><div class="box"><div class="small">Total Task</div><b id="tasks">0</b></div></div>
-<div class="card"><h3>Daily Tasks</h3>
-<div class="task"><div><b>🎥 Video Dekho</b><div class="small">+50 Coins</div></div><button onclick="earn(50,this)">Claim</button></div>
-<div class="task"><div><b>📢 Ad Dekho</b><div class="small">+30 Coins</div></div><button onclick="earn(30,this)">Claim</button></div>
-<div class="task"><div><b>👥 Friend Invite</b><div class="small">+200 Coins</div></div><button onclick="earn(200,this)">Claim</button></div>
-<div class="task"><div><b>✅ Daily Check-in</b><div class="small">+20 Coins</div></div><button onclick="earn(20,this)">Claim</button></div>
-</div><br><br><br>
-  
-<div class="nav">
-<div class="active" onclick="window.scrollTo(0,0)">🏠<br>Home</div>
-<div onclick="alert('Tasks উপরে আছে!')">🎯<br>Tasks</div>
-<div onclick="alert('Refer Code: COINOVAA - বন্ধুকে দিলে 200 Coins পাবা!')">👥<br>Refer</div>
-<div onclick="alert('Profile দেখতে Home এ যাও')">👤<br>Profile</div>
+<div class="row"><div class="box"><div class="small">Today Earn</div><b id="today">0</b></div><div class="box"><div class="small">Total Task</div><b id="tasks">0</b></div><div class="box"><div class="small">Refer Earn</div><b id="referEarn">0</b></div></div>
+<div class="card"><h3>🔥 Quick Task</h3>
+<div class="task"><div><b>✅ Daily Check-in</b><div class="small">+20 Coins</div></div><button onclick="earn(20,this,'Daily Check-in')">Claim</button></div>
+<div class="task"><div><b>🎥 Video Dekho</b><div class="small">+50 Coins</div></div><button onclick="earn(50,this,'Video Dekho')">Claim</button></div>
 </div>
-  
+</div>
+<div id="page-tasks" class="page">
+<div class="card"><h3>🎯 Daily Tasks • সব টাস্ক</h3><p class="small">টাস্ক শেষ করলেই কয়েন যোগ হবে</p>
+<div class="task"><div><b>🎥 Video Dekho</b><div class="small">+50 Coins</div></div><button onclick="earn(50,this,'Video Dekho')">Claim</button></div>
+<div class="task"><div><b>📢 Ad Dekho</b><div class="small">+30 Coins</div></div><button onclick="earn(30,this,'Ad Dekho')">Claim</button></div>
+<div class="task"><div><b>👥 Friend Invite</b><div class="small">+200 Coins</div></div><button onclick="goPage('refer')">Invite</button></div>
+<div class="task"><div><b>✅ Daily Check-in</b><div class="small">+20 Coins</div></div><button onclick="earn(20,this,'Daily Check-in')">Claim</button></div>
+</div>
+</div>
+<div id="page-refer" class="page">
+<div class="card" style="text-align:center">
+<h3 class="gold">🎁 Share and Earn</h3><p class="small">বন্ধুকে পাঠাও, দুইজনে কয়েন পাও</p>
+<p class="small" style="margin-top:12px">তোমার রেফার কোড</p>
+<div class="refer-code" id="myCode">COINOVAA</div>
+<button class="btn" style="width:100%" onclick="shareCode()">📤 SHARE KORO</button>
+<div class="row"><div class="box"><div class="small">তুমি পাবা</div><b class="gold">10 Coins</b></div><div class="box"><div class="small">বন্ধু পাবে</div><b class="gold">5 Coins</b></div></div>
+<p class="note">⚠️ নিয়ম: বন্ধু ID না খুললে কেউ কয়েন পাবে না।<br>Friend ID খুলে Open করলেই কয়েন আসবে।</p>
+</div>
+<div class="card">
+<h3>বন্ধুর কোড আছে?</h3>
+<p class="small" id="referStatus">এখনো কোনো কোড বসাও নাই</p>
+<input id="friendCodeInput" placeholder="বন্ধুর কোড লিখো">
+<button class="btn-green" onclick="applyRefer()">কোড বসাও • APPLY</button>
+<button class="btn" style="width:100%;margin-top:10px;background:#00C853;color:#fff" onclick="friendOpened()">✅ আমি ID খুলছি - ID OPEN KORLAM</button>
+<p class="small" style="margin-top:10px;text-align:center">এই বাটন চাপলেই তোমার আর বন্ধুর কয়েন আসবে</p>
+</div>
+<div class="card"><h3>Refer History</h3><div id="referHistory"><p class="small">এখনো কেউ জয়েন করে নাই</p></div></div>
+</div>
+<div id="page-profile" class="page">
+<div class="card" style="text-align:center">
+<div class="profile-img" id="profileEmoji">👤</div>
+<h2 id="profileName" style="margin-top:10px">Your Name</h2>
+<p class="small" id="profilePhone"></p>
+<div class="card" style="background:#0D1330">
+<p class="small">মোট কয়েন</p><div class="big"><span id="bal2">0</span> <span>Coins</span></div>
+<p class="small">= ৳ <span id="taka2">0</span> Taka</p>
+</div>
+<div class="row"><div class="box"><div class="small">My Refer Code</div><b id="myCode2" class="gold" style="font-size:16px">-</b></div><div class="box"><div class="small">Total Task</div><b id="tasks2">0</b></div></div>
+</div>
+<div class="card"><h3>📜 Coin History • হিস্ট্রি</h3><div id="historyList"></div></div>
+<div class="card"><h3>⚙️ Settings</h3><p class="small" style="margin-top:8px">নাম: <b id="settingName"></b></p><p class="small">ID: <b id="settingId"></b></p><button class="btn" style="width:100%;margin-top:12px;background:#ff4444;color:#fff" onclick="logout()">Logout</button></div>
+</div>
+</div>
+<div class="nav" id="bottomNav" style="display:none">
+<div class="active" id="nav-home" onclick="goPage('home')">🏠<br>Home</div>
+<div id="nav-tasks" onclick="goPage('tasks')">🎯<br>Tasks</div>
+<div id="nav-refer" onclick="goPage('refer')">👥<br>Refer</div>
+<div id="nav-profile" onclick="goPage('profile')">👤<br>Profile</div>
+</div>
 <script>
 let bal=Number(localStorage.getItem('c_bal')||0);
 let today=Number(localStorage.getItem('c_today')||0);
 let tc=Number(localStorage.getItem('c_task')||0);
-function show(){document.getElementById('bal').innerText=bal;document.getElementById('taka').innerText=(bal/10).toFixed(0);document.getElementById('today').innerText=today;document.getElementById('tasks').innerText=tc;}
-function login(){let n=document.getElementById('name').value;if(!n){alert('নাম লিখো!');return;}localStorage.setItem('c_name',n);document.getElementById('loginPage').style.display='none';document.getElementById('app').style.display='block';document.getElementById('uname').innerText=n;show();}
-function earn(x,btn){bal+=x;today+=x;tc++;localStorage.setItem('c_bal',bal);localStorage.setItem('c_today',today);localStorage.setItem('c_task',tc);show();btn.innerText='Done ✓';btn.disabled=true;alert('+'+x+' Coins পাইছো!');}
+let referEarn=Number(localStorage.getItem('c_refer_earn')||0);
+let history=JSON.parse(localStorage.getItem('c_history')||'[]');
+let myCode=localStorage.getItem('c_mycode')||'';
+let pendingRefer=localStorage.getItem('c_pending_refer')||'';
+let referDone=localStorage.getItem('c_refer_done')==='1';
+function save(){localStorage.setItem('c_bal',bal);localStorage.setItem('c_today',today);localStorage.setItem('c_task',tc);localStorage.setItem('c_refer_earn',referEarn);localStorage.setItem('c_history',JSON.stringify(history));}
+function addHistory(txt,amt){history.unshift({txt:txt,amt:amt,time:new Date().toLocaleString('bn-BD')});if(history.length>20) history.pop();}
+function show(){document.getElementById('bal').innerText=bal;document.getElementById('bal2').innerText=bal;document.getElementById('taka').innerText=(bal/10).toFixed(0);document.getElementById('taka2').innerText=(bal/10).toFixed(0);document.getElementById('today').innerText=today;document.getElementById('tasks').innerText=tc;document.getElementById('tasks2').innerText=tc;document.getElementById('referEarn').innerText=referEarn;document.getElementById('myCode').innerText=myCode||'COINOVAA';document.getElementById('myCode2').innerText=myCode||'-';let h=document.getElementById('historyList');if(history.length===0) h.innerHTML='<p class="small">এখনো কোনো হিস্ট্রি নাই</p>';else h.innerHTML=history.map(x=>'<div class="history-item"><span>'+x.txt+'<br><small style="color:#9AA3C7">'+x.time+'</small></span><b class="gold">+'+x.amt+'</b></div>').join('');let rs=document.getElementById('referStatus');if(referDone) rs.innerText='✅ Refer সফল! তুমি 5 Coin পাইছো, তোমার বন্ধু পাইছে 10 Coin';else if(pendingRefer) rs.innerText='⏳ কোড বসানো হইছে: '+pendingRefer+' | এখন ID OPEN বাটন চাপো, তারপর কয়েন আসবে';else rs.innerText='এখনো কোনো কোড বসাও নাই';document.getElementById('referHistory').innerHTML = referDone ? '<p class="small">✅ '+pendingRefer+' কোড থেকে +5 Coin পাইছো</p>' : '<p class="small">এখনো কেউ জয়েন করে নাই</p>';}
+function goPage(p){document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');document.querySelectorAll('.nav div').forEach(e=>e.classList.remove('active'));document.getElementById('nav-'+p).classList.add('active');window.scrollTo(0,0);show();}
+function login(){let n=document.getElementById('name').value.trim();let ph=document.getElementById('phone').value.trim();let rc=document.getElementById('referInputLogin').value.trim().toUpperCase();if(!n){alert('নাম লিখো!');return;}localStorage.setItem('c_name',n);if(ph) localStorage.setItem('c_phone',ph);if(!myCode){myCode=n.replace(/[^A-Za-z]/g,'').toUpperCase().substring(0,6)+Math.floor(100+Math.random()*900);localStorage.setItem('c_mycode',myCode);}if(rc && !referDone && !pendingRefer){pendingRefer=rc;localStorage.setItem('c_pending_refer',rc);alert('রেফার কোড বসছে! এখন Refer পেজে গিয়ে ID OPEN বাটন চাপো। ID না খুললে কেউ কয়েন পাবে না।');}document.getElementById('loginPage').style.display='none';document.getElementById('app').style.display='block';document.getElementById('bottomNav').style.display='flex';document.getElementById('uname').innerText=n;document.getElementById('profileName').innerText=n;document.getElementById('settingName').innerText=n;document.getElementById('settingId').innerText=myCode;document.getElementById('profilePhone').innerText=ph||'';document.getElementById('profileEmoji').innerText=n.charAt(0).toUpperCase();show();}
+function earn(x,btn,taskName){bal+=x;today+=x;tc++;addHistory(taskName,x);save();show();if(btn){btn.innerText='Done ✓';btn.disabled=true;}alert('+'+x+' Coins পাইছো!');}
+function applyRefer(){let c=document.getElementById('friendCodeInput').value.trim().toUpperCase();if(!c){alert('কোড লিখো!');return;}if(c===myCode){alert('নিজের কোড নিজে বসানো যাবে না!');return;}if(referDone){alert('তুমি আগেই রেফার বোনাস পাইছো!');return;}pendingRefer=c;localStorage.setItem('c_pending_refer',c);show();alert('কোড বসছে! এখন ID OPEN বাটন চাপো। ID না খুললে কয়েন আসবে না।');}
+function friendOpened(){if(referDone){alert('আগেই পাইছো!');return;}if(!pendingRefer){alert('আগে বন্ধুর কোড বসাও!');return;}referDone=true;localStorage.setItem('c_refer_done','1');bal+=5;referEarn+=5;addHistory('Refer Bonus - '+pendingRefer,5);save();show();alert('✅ ID OPEN হইছে! তুমি পাইলা 5 Coin, তোমার বন্ধু পাবে 10 Coin 🎉');}
+function shareCode(){let txt='COINOVAA তে জয়েন করো! আমার কোড: '+myCode+' | ID খুললেই দুইজনে কয়েন পাবো!';if(navigator.share) navigator.share({text:txt});else{navigator.clipboard.writeText(txt);alert('কোড কপি হইছে: '+myCode);}}
 function withdraw(){if(bal<1000){alert('কমপক্ষে 1000 Coins লাগবো! এখন আছে '+bal);}else{alert('Withdraw Request পাঠানো হইছে! ৳'+(bal/10)+' পাবা।');}}
-function logout(){document.getElementById('app').style.display='none';document.getElementById('loginPage').style.display='block';}
-if(localStorage.getItem('c_name')){document.getElementById('loginPage').style.display='none';document.getElementById('app').style.display='block';document.getElementById('uname').innerText=localStorage.getItem('c_name');show();}
+function logout(){document.getElementById('app').style.display='none';document.getElementById('loginPage').style.display='block';document.getElementById('bottomNav').style.display='none';}
+if(localStorage.getItem('c_name')){let n=localStorage.getItem('c_name');document.getElementById('loginPage').style.display='none';document.getElementById('app').style.display='block';document.getElementById('bottomNav').style.display='flex';document.getElementById('uname').innerText=n;document.getElementById('profileName').innerText=n;document.getElementById('settingName').innerText=n;document.getElementById('settingId').innerText=myCode||'';document.getElementById('profilePhone').innerText=localStorage.getItem('c_phone')||'';document.getElementById('profileEmoji').innerText=n.charAt(0).toUpperCase();show();}
 </script>
 </body>
-</html>
+                                                    </html>
