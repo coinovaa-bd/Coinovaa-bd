@@ -173,7 +173,7 @@ class MainHome extends StatefulWidget {
 class _MainHomeState extends State<MainHome> {
   int _index = 0;
   int coins = 0;
-  @override void initState() { super.initState(); _load(); }
+  @override void initState() { super.initState(); }
   void _load() async {
     final p = await SharedPreferences.getInstance();
     setState(() => coins = p.getInt('coins_${widget.userId}') ?? 0);
