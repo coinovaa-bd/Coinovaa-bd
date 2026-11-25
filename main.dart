@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-    await MobileAds.instance.initialize();
-  runApp(CoinovaaApp()); 
+  runApp(CoinovaaApp());
 }
 
 class CoinovaaApp extends StatelessWidget {
