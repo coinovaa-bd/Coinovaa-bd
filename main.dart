@@ -178,34 +178,18 @@ class _MainHomeState extends State<MainHome> {
     final p = await SharedPreferences.getInstance();
     setState(() => coins = p.getInt('coins_${widget.userId}') ?? 600);
   }
-  RewardedAd? _rewardedAd;
-
-void _watchAdAndReward() {
-  RewardedAd.load(
-    adUnitId: 'ca-app-pub-3940256099942544/5224354917',
-    request: const AdRequest(),
-    rewardedAdLoadCallback: RewardedAdLoadCallback(
-      onAdLoaded: (ad) {
-        _rewardedAd = ad;
-        _rewardedAd!.show(
-          onUserEarnedReward: (ad, reward) {
-            _addCoins(2);
-          },
-        );
-      },
-      onAdFailedToLoad: (error) {
-        _addCoins(2);
-      },
-    ),
-  );
-}
   void _addCoins(int v) async {
     final p = await SharedPreferences.getInstance();
     setState(() => coins += v);
     await p.setInt('coins_${widget.userId}', coins);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('+$v Coins Added!')));
   }
-
+  void _watchAdAndReward() {
+  _addCoins(2);
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Ad dekhar jonno +2 coin!')),
+  );
+  }
   @override Widget build(BuildContext context) {
     List<Widget> pages = [
       // HOME
