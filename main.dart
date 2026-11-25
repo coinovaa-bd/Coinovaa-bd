@@ -179,6 +179,27 @@ class _MainHomeState extends State<MainHome> {
     final p = await SharedPreferences.getInstance();
     setState(() => coins = p.getInt('coins_${widget.userId}') ?? 600);
   }
+  RewardedAd? _rewardedAd;
+
+void _watchAdAndReward() {
+  RewardedAd.load(
+    adUnitId: 'ca-app-pub-3940256099942544/5224354917',
+    request: const AdRequest(),
+    rewardedAdLoadCallback: RewardedAdLoadCallback(
+      onAdLoaded: (ad) {
+        _rewardedAd = ad;
+        _rewardedAd!.show(
+          onUserEarnedReward: (ad, reward) {
+            _addCoins(2);
+          },
+        );
+      },
+      onAdFailedToLoad: (error) {
+        _addCoins(2);
+      },
+    ),
+  );
+}
   void _addCoins(int v) async {
     final p = await SharedPreferences.getInstance();
     setState(() => coins += v);
@@ -218,7 +239,7 @@ class _MainHomeState extends State<MainHome> {
       ListView(padding: EdgeInsets.all(16), children: [
         Text('Tasks', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
         SizedBox(height: 12),
-        _taskCard('Watch Video', 'Watch a short video', '+2 Coins', () => _addCoins(2)),
+        _taskCard('Watch Video', 'Watch a short video', '+2 Coins', () => _watchAdAndReward()),
         _taskCard('Daily Check-in', 'Open app daily', '+10 Coins', () => _addCoins(10)),
         _taskCard('Visit Website', 'Visit sponsor site', '+5 Coins', () => _addCoins(5)),
         _taskCard('Share App', 'Share with friends', '+20 Coins', () => _addCoins(20)),
