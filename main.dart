@@ -184,7 +184,10 @@ class _MainHomeState extends State<MainHome> {
     await p.setInt('coins_${widget.userId}', coins);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('+$v Coins Added!')));
   }
-  
+void _watchAdAndReward() {
+  _addCoins(2);
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('+2 Coins!')));
+}  
   
   @override Widget build(BuildContext context) {
     List<Widget> pages = [
