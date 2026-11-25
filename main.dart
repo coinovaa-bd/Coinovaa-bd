@@ -1,143 +1,138 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() => runApp(const CoinovaaApp());
+void main() => runApp(CoinovaaApp());
 
 class CoinovaaApp extends StatelessWidget {
-  const CoinovaaApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Colors.black),
-      home: const LoginPage(),
+      theme: ThemeData(scaffoldBackgroundColor: Color(0xFF0F172A)),
+      home: LauncherScreen(),
     );
   }
 }
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final id = TextEditingController();
-  final password = TextEditingController();
+// ============ 1. LAUNCHER ============
+class LauncherScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(24),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Text("Coinovaa", style: TextStyle(fontSize: 32, color: Colors.amber, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 20),
-          TextField(controller: id, decoration: const InputDecoration(labelText: "ID", border: OutlineInputBorder())),
-          const SizedBox(height: 12),
-          TextField(controller: password, obscureText: true, decoration: const InputDecoration(labelText: "Password", border: OutlineInputBorder())),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, minimumSize: const Size(double.infinity, 50)),
-            onPressed: () {
-              if (id.text.trim() == 'riyad5052' && password.text.trim() == 'riyad505252') {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const AdminDashboard()));
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Wrong ID or Password")));
-              }
-            },
-            child: const Text("Login", style: TextStyle(color: Colors.black)),
-          ),
+          Text('COINOVAA', style: TextStyle(color: Colors.amber, fontSize: 38, fontWeight: FontWeight.bold)),
+          Text('Earn Real Rewards', style: TextStyle(color: Colors.white70)),
+          SizedBox(height: 40),
+          SizedBox(width: double.infinity, height: 55, child: ElevatedButton(
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => UserLogin())),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
+            child: Text('Open User App', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          )),
+          SizedBox(height: 12),
+          SizedBox(width: double.infinity, height: 55, child: OutlinedButton(
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminLogin())),
+            child: Text('Admin Login', style: TextStyle(color: Colors.white)),
+          )),
         ]),
       ),
     );
   }
 }
 
-class AdminDashboard extends StatelessWidget {
-  const AdminDashboard({super.key});
-  Widget card(BuildContext context, String title, String sub, IconData icon, Widget page) {
-    return Card(
-      color: const Color(0xFF1E1E1E),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.amber, size: 32),
-        title: Text(title, style: const TextStyle(fontSize: 18)),
-        subtitle: Text(sub),
-        trailing: const Icon(Icons.arrow_forward_ios),
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => page)),
-      ),
-    );
+// ============ 2. USER LOGIN ============
+class UserLogin extends StatefulWidget { @override _UserLoginState createState() => _UserLoginState(); }
+class _UserLoginState extends State<UserLogin> {
+  final idC = TextEditingController();
+  final pwC = TextEditingController();
+  String err = '';
+  void login() {
+    if (idC.text.trim() == 'riyad5052' && pwC.text.trim() == 'riyad505252') {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UserHome()));
+    } else {
+      setState(() => err = 'সঠিক ID এবং Password দিন।');
+    }
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Admin Dashboard"),
-        backgroundColor: Colors.black,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginPage())),
-          )
-        ],
-      ),
-      body: ListView(padding: const EdgeInsets.all(12), children: [
-        const Text("Welcome, riyad5052", style: TextStyle(fontSize: 24, color: Colors.amber, fontWeight: FontWeight.bold)),
-        const Text("Full Admin Access"),
-        const SizedBox(height: 12),
-        card(context, "Manage Users", "View, block and review user accounts", Icons.people, const UsersPage()),
-        card(context, "Coin Management", "Review coin adjustments", Icons.monetization_on, const CoinPage()),
-        card(context, "Video & Tasks", "Manage earning content", Icons.video_library, const VideoPage()),
-        card(context, "Referral Settings", "Configure referral rules", Icons.group_add, const ReferralPage()),
-        card(context, "Withdraw Requests", "Review bKash, Nagad and Rocket requests", Icons.account_balance_wallet, const WithdrawPage()),
-        card(context, "Transactions", "Review transaction records", Icons.receipt, const TransactionsPage()),
-        card(context, "App Settings", "Manage minimum withdrawal: 200 TK", Icons.settings, const SettingsPage()),
-      ]),
-    );
+    return Scaffold(appBar: AppBar(title: Text('User Login'), backgroundColor: Color(0xFF0F172A)),
+      body: Padding(padding: EdgeInsets.all(20), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        TextField(controller: idC, style: TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'User ID', filled: true, fillColor: Colors.white10, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)))),
+        SizedBox(height: 12),
+        TextField(controller: pwC, obscureText: true, style: TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Password', filled: true, fillColor: Colors.white10, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)))),
+        if (err.isNotEmpty) Padding(padding: EdgeInsets.only(top: 10), child: Text(err, style: TextStyle(color: Colors.redAccent))),
+        SizedBox(height: 20),
+        SizedBox(width: double.infinity, height: 52, child: ElevatedButton(onPressed: login, style: ElevatedButton.styleFrom(backgroundColor: Colors.amber), child: Text('LOGIN', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)))),
+      ])));
   }
 }
 
-class SimplePage extends StatelessWidget {
-  final String title;
-  final List<String> items;
-  const SimplePage({super.key, required this.title, required this.items});
+// ============ 3. ADMIN LOGIN - ASOL ID ============
+class AdminLogin extends StatefulWidget { @override _AdminLoginState createState() => _AdminLoginState(); }
+class _AdminLoginState extends State<AdminLogin> {
+  final idC = TextEditingController();
+  final pwC = TextEditingController();
+  String err = '';
+  void login() {
+    // ASOL ADMIN ID - SUDHU TUMAR TA
+    if (idC.text.trim() == 'riyad5052' && pwC.text.trim() == 'riyad505252') {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => AdminHome()));
+    } else {
+      setState(() => err = 'সঠিক Admin ID দিন।');
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title), backgroundColor: Colors.black),
-      body: ListView.builder(
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              title: Text(items[index]),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Approved")));
-                    },
-                    child: const Text("Approve"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Rejected / Blocked")));
-                    },
-                    child: const Text("Reject", style: TextStyle(color: Colors.red)),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: Text('Admin Login'), backgroundColor: Color(0xFF0F172A)),
+      body: Padding(padding: EdgeInsets.all(20), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text('Welcome Admin', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+        SizedBox(height: 20),
+        TextField(controller: idC, style: TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Admin ID', filled: true, fillColor: Colors.white10, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)))),
+        SizedBox(height: 12),
+        TextField(controller: pwC, obscureText: true, style: TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Password', filled: true, fillColor: Colors.white10, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)))),
+        if (err.isNotEmpty) Padding(padding: EdgeInsets.only(top: 10), child: Text(err, style: TextStyle(color: Colors.redAccent))),
+        SizedBox(height: 20),
+        SizedBox(width: double.infinity, height: 52, child: ElevatedButton(onPressed: login, style: ElevatedButton.styleFrom(backgroundColor: Colors.amber), child: Text('LOGIN', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)))),
+      ])));
   }
 }
 
-class UsersPage extends StatelessWidget { const UsersPage({super.key}); @override Widget build(BuildContext context) => const SimplePage(title: "Manage Users", items: ["User: rakib123 - 500 Coin - Active", "User: sakib99 - 1200 Coin - Active", "User: mim_01 - 0 Coin - New"]); }
-class CoinPage extends StatelessWidget { const CoinPage({super.key}); @override Widget build(BuildContext context) => const SimplePage(title: "Coin Management", items: ["rakib123 requested +100 Coin", "sakib99 requested +500 Coin"]); }
-class VideoPage extends StatelessWidget { const VideoPage({super.key}); @override Widget build(BuildContext context) => const SimplePage(title: "Video & Tasks", items: ["Video 1: https://youtube.com/... - 10 Coin", "Task: Follow Page - 20 Coin", "Video 2: Watch 1 min - 15 Coin"]); }
-class ReferralPage extends StatelessWidget { const ReferralPage({super.key}); @override Widget build(BuildContext context) => const SimplePage(title: "Referral Settings", items: ["Refer Bonus: 50 Coin", "Refer Commission: 10%", "Min Refer: 5 Friends"]); }
-class WithdrawPage extends StatelessWidget { const WithdrawPage({super.key}); @override Widget build(BuildContext context) => const SimplePage(title: "Withdraw Requests", items: ["rakib123 - bKash 017XX - 500 TK", "sakib99 - Nagad 018XX - 1000 TK", "mim_01 - Rocket 019XX - 300 TK"]); }
-class TransactionsPage extends StatelessWidget { const TransactionsPage({super.key}); @override Widget build(BuildContext context) => const SimplePage(title: "Transactions", items: ["rakib123 - Earn Video - +10 Coin", "sakib99 - Withdraw - 1000 TK", "mim_01 - Refer Bonus - +50 Coin"]); }
-class SettingsPage extends StatelessWidget { const SettingsPage({super.key}); @override Widget build(BuildContext context) => const SimplePage(title: "App Settings", items: ["Minimum Withdraw: 200 TK", "App Version: 1.1.0", "Maintenance: OFF"]); }
+// ============ 4. USER HOME ============
+class UserHome extends StatefulWidget { @override _UserHomeState createState() => _UserHomeState(); }
+class _UserHomeState extends State<UserHome> {
+  double balance = 0;
+  @override void initState() { super.initState(); _load(); }
+  _load() async { final p = await SharedPreferences.getInstance(); setState(() => balance = p.getDouble('balance') ?? 0); }
+  _save() async { final p = await SharedPreferences.getInstance(); await p.setDouble('balance', balance); }
+  void watch() { setState(() => balance += 5); _save(); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('+5 Coins! Balance: ${balance.toStringAsFixed(0)}'))); }
+  @override Widget build(BuildContext context) {
+    return Scaffold(appBar: AppBar(title: Text('Coinovaa'), backgroundColor: Color(0xFF0F172A)),
+      body: Padding(padding: EdgeInsets.all(16), child: Column(children: [
+        Container(width: double.infinity, padding: EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(16)),
+          child: Column(children: [Text('Your Balance'), Text('${balance.toStringAsFixed(0)} Coins', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)), Text('ID: riyad5052')])),
+        SizedBox(height: 16),
+        ListTile(tileColor: Colors.white10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), title: Text('Watch Video - Earn 5 Coins', style: TextStyle(color: Colors.white)), trailing: ElevatedButton(onPressed: watch, child: Text('WATCH'))),
+        SizedBox(height: 12),
+        ListTile(tileColor: Colors.white10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), title: Text('Refer & Earn', style: TextStyle(color: Colors.white)), subtitle: Text('Code: RYAD5052 - Earn 20 per refer', style: TextStyle(color: Colors.white60))),
+        SizedBox(height: 12),
+        ListTile(tileColor: Colors.white10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), title: Text('Withdraw', style: TextStyle(color: Colors.white)), subtitle: Text('Min 500 Coins - bKash / Nagad', style: TextStyle(color: Colors.white60))),
+      ])));
+  }
+}
+
+// ============ 5. ADMIN HOME ============
+class AdminHome extends StatelessWidget {
+  @override Widget build(BuildContext context) {
+    return Scaffold(appBar: AppBar(title: Text('Admin Panel - riyad5052'), backgroundColor: Color(0xFF0F172A)),
+      body: Padding(padding: EdgeInsets.all(16), child: Column(children: [
+        Container(width: double.infinity, padding: EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(16)), child: Column(children: [Text('Admin Dashboard'), Text('Welcome, riyad5052', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))])),
+        SizedBox(height: 16),
+        ListTile(tileColor: Colors.white10, title: Text('Total Users: 1', style: TextStyle(color: Colors.white))),
+        SizedBox(height: 10),
+        ListTile(tileColor: Colors.white10, title: Text('Withdraw Requests: 0', style: TextStyle(color: Colors.white))),
+        SizedBox(height: 10),
+        ListTile(tileColor: Colors.white10, title: Text('Manage Tasks', style: TextStyle(color: Colors.white))),
+      ])));
+  }
+}
