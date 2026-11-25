@@ -173,11 +173,11 @@ class MainHome extends StatefulWidget {
 }
 class _MainHomeState extends State<MainHome> {
   int _index = 0;
-  int coins = 600;
-  @override void initState() { super.initState(); _load(); }
+  int coins = 0;
+  @override void initState() { super.initState(); _load(); _loadAd(); }
   void _load() async {
     final p = await SharedPreferences.getInstance();
-    setState(() => coins = p.getInt('coins_${widget.userId}') ?? 600);
+    setState(() => coins = p.getInt('coins_${widget.userId}') ?? 0);
   }
   void _addCoins(int v) async {
     final p = await SharedPreferences.getInstance();
@@ -185,11 +185,35 @@ class _MainHomeState extends State<MainHome> {
     await p.setInt('coins_${widget.userId}', coins);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('+$v Coins Added!')));
   }
-  void _watchAdAndReward() {
-  _addCoins(2);
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('Ad dekhar jonno +2 coin!')),
+  RewardedAd? _rewardedAd;
+
+void _loadAd() {
+  RewardedAd.load(
+    adUnitId: 'ca-app-pub-3940256099942544/5224354917',
+    request: const AdRequest(),
+    rewardedAdLoadCallback: RewardedAdLoadCallback(
+      onAdLoaded: (ad) { _rewardedAd = ad; },
+      onAdFailedToLoad: (err) { _rewardedAd = null; },
+    ),
   );
+}
+
+void _watchAdAndReward() {
+  if (_rewardedAd == null) {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ad load hocche, ektu pore try koro')));
+    _loadAd();
+    return;
+  }
+  _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
+    onAdDismissedFullScreenContent: (ad) { ad.dispose(); _loadAd(); },
+    onAdFailedToShowFullScreenContent: (ad, err) { ad.dispose(); _loadAd(); },
+  );
+  _rewardedAd!.show(onUserEarnedReward: (ad, reward) {
+    _addCoins(2);
+  });
+  _rewardedAd = null;
+}
+  }
   }
   @override Widget build(BuildContext context) {
     List<Widget> pages = [
