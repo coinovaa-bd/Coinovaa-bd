@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -184,36 +184,7 @@ class _MainHomeState extends State<MainHome> {
     await p.setInt('coins_${widget.userId}', coins);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('+$v Coins Added!')));
   }
-  RewardedAd? _rewardedAd;
-void _loadAd() {
-  try {
-    RewardedAd.load(
-      adUnitId: 'ca-app-pub-3940256099942544/5224354917',
-      request: AdRequest(),
-      rewardedAdLoadCallback: RewardedAdLoadCallback(
-        onAdLoaded: (ad) { if (mounted) { setState(() { _rewardedAd = ad; }); } },
-        onAdFailedToLoad: (error) { _rewardedAd = null; },
-      ),
-    );
-  } catch (e) {
-    _rewardedAd = null;
-  }
-}
-void _watchAdAndReward() {
-  if (_rewardedAd == null) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ad load hocche, ektu pore try koro')));
-    _loadAd();
-    return;
-  }
-  _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
-    onAdDismissedFullScreenContent: (ad) { ad.dispose(); _loadAd(); },
-    onAdFailedToShowFullScreenContent: (ad, err) { ad.dispose(); _loadAd(); },
-  );
-  _rewardedAd!.show(onUserEarnedReward: (ad, reward) {
-    _addCoins(2);
-  });
-  _rewardedAd = null;
-}
+  
   
   @override Widget build(BuildContext context) {
     List<Widget> pages = [
