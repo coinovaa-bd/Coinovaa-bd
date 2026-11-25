@@ -174,7 +174,7 @@ class MainHome extends StatefulWidget {
 class _MainHomeState extends State<MainHome> {
   int _index = 0;
   int coins = 0;
-  @override void initState() { super.initState(); _load(); _loadAd(); }
+  @override void initState() { super.initState(); _load(); Future.delayed(Duration(seconds: 2), () { if (mounted) _loadAd(); }); }
   void _load() async {
     final p = await SharedPreferences.getInstance();
     setState(() => coins = p.getInt('coins_${widget.userId}') ?? 0);
@@ -186,18 +186,20 @@ class _MainHomeState extends State<MainHome> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('+$v Coins Added!')));
   }
   RewardedAd? _rewardedAd;
-
 void _loadAd() {
-  RewardedAd.load(
-    adUnitId: 'ca-app-pub-3940256099942544/5224354917',
-    request: const AdRequest(),
-    rewardedAdLoadCallback: RewardedAdLoadCallback(
-      onAdLoaded: (ad) { _rewardedAd = ad; },
-      onAdFailedToLoad: (err) { _rewardedAd = null; },
-    ),
-  );
+  try {
+    RewardedAd.load(
+      adUnitId: 'ca-app-pub-3940256099942544/5224354917',
+      request: AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) { if (mounted) { setState(() { _rewardedAd = ad; }); } },
+        onAdFailedToLoad: (error) { _rewardedAd = null; },
+      ),
+    );
+  } catch (e) {
+    _rewardedAd = null;
+  }
 }
-
 void _watchAdAndReward() {
   if (_rewardedAd == null) {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ad load hocche, ektu pore try koro')));
