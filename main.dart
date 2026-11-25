@@ -85,12 +85,81 @@ class _UserLoginState extends State<UserLogin> {
   }
 }
 
-class AdminLogin extends StatelessWidget {
+class AdminLogin extends StatefulWidget {
+  @override _AdminLoginState createState() => _AdminLoginState();
+}
+class _AdminLoginState extends State<AdminLogin> {
+  final idC = TextEditingController();
+  final pwC = TextEditingController();
+  String err = '';
+  void login() {
+    if (idC.text.trim() == 'riyaduri56' && pwC.text.trim() == 'riyaduri@56') {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => AdminPanel()));
+    } else {
+      setState(() => err = 'ভুল ID / Password!');
+    }
+  }
   @override Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text('Admin Login')), body: Center(child: Text('Admin Panel - Coming Soon', style: TextStyle(color: Colors.white))));
+    return Scaffold(
+      appBar: AppBar(title: Text('Admin Login'), backgroundColor: Color(0xFF0F172A)),
+      body: Padding(padding: EdgeInsets.all(20), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text('Admin Login', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+        SizedBox(height: 20),
+        TextField(controller: idC, style: TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Admin ID', labelStyle: TextStyle(color: Colors.white70), border: OutlineInputBorder())),
+        SizedBox(height: 12),
+        TextField(controller: pwC, obscureText: true, style: TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Password', labelStyle: TextStyle(color: Colors.white70), border: OutlineInputBorder())),
+        SizedBox(height: 12),
+        if (err.isNotEmpty) Text(err, style: TextStyle(color: Colors.red)),
+        SizedBox(height: 12),
+        SizedBox(width: double.infinity, height: 50, child: ElevatedButton(onPressed: login, style: ElevatedButton.styleFrom(backgroundColor: Colors.amber), child: Text('Login as Admin', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)))),
+        SizedBox(height: 10),
+        Text('Only for Admin', style: TextStyle(color: Colors.white54)),
+      ])),
+    );
   }
 }
 
+class AdminPanel extends StatefulWidget {
+  @override _AdminPanelState createState() => _AdminPanelState();
+}
+class _AdminPanelState extends State<AdminPanel> {
+  int totalCoins = 0;
+  List<String> users = [];
+  @override void initState() { super.initState(); _load(); }
+  void _load() async {
+    final p = await SharedPreferences.getInstance();
+    Set<String> keys = p.getKeys();
+    int total = 0;
+    List<String> u = [];
+    for (var k in keys) {
+      if (k.startsWith('coins_')) {
+        u.add(k.replaceAll('coins_', ''));
+        total += p.getInt(k) ?? 0;
+      }
+    }
+    setState(() { users = u; totalCoins = total; });
+  }
+  @override Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Admin Panel'), backgroundColor: Color(0xFF0F172A)),
+      body: Padding(padding: EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Expanded(child: Container(padding: EdgeInsets.all(16), decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(12)), child: Column(children: [Text('Total Users'), Text('${users.length}', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold))]))),
+          SizedBox(width: 10),
+          Expanded(child: Container(padding: EdgeInsets.all(16), decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(12)), child: Column(children: [Text('Total Coins', style: TextStyle(color: Colors.white60)), Text('$totalCoins', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold))]))),
+        ]),
+        SizedBox(height: 16),
+        Text('All Users', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+        SizedBox(height: 10),
+        Expanded(child: users.isEmpty ? Center(child: Text('কোনো User এখনো Login করেনি', style: TextStyle(color: Colors.white60))) : ListView.builder(itemCount: users.length, itemBuilder: (c, i) {
+          return FutureBuilder<int>(future: SharedPreferences.getInstance().then((p) => p.getInt('coins_${users[i]}') ?? 0), builder: (ctx, snap) {
+            return Container(margin: EdgeInsets.only(bottom: 8), padding: EdgeInsets.all(14), decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(12)), child: Row(children: [CircleAvatar(backgroundColor: Colors.amber, child: Text(users[i][0].toUpperCase())), SizedBox(width: 12), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(users[i], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)), Text('ID: ${users[i]}', style: TextStyle(color: Colors.white54))])), Text('${snap.data ?? 0} Coins', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold))]));
+          });
+        })),
+      ])),
+    );
+  }
+}
 // --- MAIN HOME WITH 4 TABS ---
 class MainHome extends StatefulWidget {
   final String userId;
