@@ -213,8 +213,7 @@ void _watchAdAndReward() {
   });
   _rewardedAd = null;
 }
-  }
-  }
+  
   @override Widget build(BuildContext context) {
     List<Widget> pages = [
       // HOME
