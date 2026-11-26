@@ -173,6 +173,9 @@ class MainHome extends StatefulWidget {
 class _MainHomeState extends State<MainHome> {
   int _index = 0;
   int coins = 0;
+  int todayAds = 0;
+int dailyAdLimit = 100;
+int minWithdrawCoins = 5000;
   @override void initState() { super.initState(); }
   void _load() async {
     final p = await SharedPreferences.getInstance();
@@ -185,6 +188,11 @@ class _MainHomeState extends State<MainHome> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('+$v Coins Added!')));
   }
 void _watchAdAndReward() {
+  if (todayAds >= dailyAdLimit) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Ajker limit sesh!')));
+    return;
+  }
+  todayAds++;
   _addCoins(2);
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('+2 Coins!')));
 }  
@@ -204,7 +212,7 @@ void _watchAdAndReward() {
         Container(width: double.infinity, padding: EdgeInsets.all(20), decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.amber, Colors.orange]), borderRadius: BorderRadius.circular(16)), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('Total Balance', style: TextStyle(color: Colors.black54)),
           Text('$coins Coins', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-          Text('= ${(coins / 100).toStringAsFixed(0)} BDT', style: TextStyle(fontSize: 16)),
+          Text('${(coins / 1000) * 25} BDT'
           SizedBox(height: 12),
           ElevatedButton(onPressed: () => setState(() => _index = 1), style: ElevatedButton.styleFrom(backgroundColor: Colors.black), child: Text('Earn More', style: TextStyle(color: Colors.white))),
         ])),
@@ -212,7 +220,7 @@ void _watchAdAndReward() {
         Text('Quick Actions', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
         SizedBox(height: 10),
         Row(children: [
-          Expanded(child: _actionCard(Icons.play_circle, 'Watch Video', '+2 Coins', () => _addCoins(2))),
+          Expanded(child: _actionCard(Icons.play_circle, 'Watch Video', '+2 Coins', () => _watchAdAndReward())
           SizedBox(width: 10),
           Expanded(child: _actionCard(Icons.people, 'Refer Friend', '+50 Coins', () => setState(() => _index = 2))),
         ]),
