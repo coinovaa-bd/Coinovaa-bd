@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+seeimport 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -212,7 +212,7 @@ void _watchAdAndReward() {
         Container(width: double.infinity, padding: EdgeInsets.all(20), decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.amber, Colors.orange]), borderRadius: BorderRadius.circular(16)), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('Total Balance', style: TextStyle(color: Colors.black54)),
           Text('$coins Coins', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-          Text('${(coins / 1000) * 25} BDT'
+          Text('${(coins / 1000) * 25} BDT'),
           SizedBox(height: 12),
           ElevatedButton(onPressed: () => setState(() => _index = 1), style: ElevatedButton.styleFrom(backgroundColor: Colors.black), child: Text('Earn More', style: TextStyle(color: Colors.white))),
         ])),
@@ -220,7 +220,7 @@ void _watchAdAndReward() {
         Text('Quick Actions', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
         SizedBox(height: 10),
         Row(children: [
-          Expanded(child: _actionCard(Icons.play_circle, 'Watch Video', '+2 Coins', () => _watchAdAndReward())
+          Expanded(child: _actionCard(Icons.play_circle, 'Watch Video', '+2 Coins', () => _watchAdAndReward()))
           SizedBox(width: 10),
           Expanded(child: _actionCard(Icons.people, 'Refer Friend', '+50 Coins', () => setState(() => _index = 2))),
         ]),
