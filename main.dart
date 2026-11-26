@@ -220,7 +220,7 @@ void _watchAdAndReward() {
         Text('Quick Actions', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
         SizedBox(height: 10),
         Row(children: [
-          Expanded(child: _actionCard(Icons.play_circle, 'Watch Video', '+2 Coins', () => _watchAdAndReward()))
+          Expanded(child: _actionCard(Icons.play_circle, 'Watch Video', '+2 Coins', () => _watchAdAndReward())),
           SizedBox(width: 10),
           Expanded(child: _actionCard(Icons.people, 'Refer Friend', '+50 Coins', () => setState(() => _index = 2))),
         ]),
